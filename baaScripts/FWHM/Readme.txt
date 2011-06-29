@@ -1,0 +1,1 @@
+This python script calculates FWHM from a text file of data. Included are two sample data files.
