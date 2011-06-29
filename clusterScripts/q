@@ -1,0 +1,19 @@
+#!/bin/bash
+
+qstat -g c
+qstat > ~/txt
+cat ~/txt | awk '{print $4}' | sort -u > ~/txt2
+echo
+running=`cat ~/txt | grep ' r ' | wc -l`
+waiting=`cat ~/txt | grep ' qw ' | wc -l`
+echo $running $waiting | awk '{ printf "Total users are running %-4s and waiting on %s\n",$1,$2}' FS=' '
+for uname in `cat ~/txt2`
+do
+ running=`cat ~/txt | grep $uname | grep ' r ' | wc -l`
+ runproc=`cat ~/txt | grep $uname | grep ' r ' | awk '{s+=$9} END {print s}'`
+ waiting=`cat ~/txt | grep $uname | grep ' qw ' | wc -l`
+ waitproc=`cat ~/txt | grep $uname | grep ' qw ' | awk '{s+=$8} END {print s}'`
+ echo $uname $running $runproc $waiting $waitproc| awk '{ printf "%-12s is running %-4s(%-4s) and waiting on %-4s(%-4s)\n",$1,$2,$3,$4,$5}' FS=' '
+done
+rm -f ~/txt ~/txt2
+echo

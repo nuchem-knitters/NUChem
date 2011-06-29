@@ -1,0 +1,60 @@
+#########################################
+#!/bin/bash
+#gets info on all my jobs and prints them with their full names
+
+
+let r=0
+let qw=0
+
+if [ "$1" == "" ]; then  # Check the command line argument for a username.
+   me=$(whoami)         # If there is no argument given, run the script for the current username.
+else
+   me=$1                # Otherwise, run the script for the user in the argument.
+fi
+
+qstat -u $me > ~/qstatu.tmp # write to intermediate output
+
+printf "%-7s %-50s %-10s %-10s %-15s %-20s\n" "Job ID" "Name" "Status" "# of CPUs" "CPU Time" "Node" # print header
+
+for d in $(qstat -u $me | egrep ' [d]r | r ' | awk '{print $1}') #make a list of the ID #'s of my running jobs
+      do
+      let r+=1
+      qstat -j $d> ~/qstatj.tmp # another intermediate output
+
+      stat=$(cat ~/qstatu.tmp | grep $d | awk '{print $5}') #get the status of each of those job #'s
+      node=$(cat ~/qstatu.tmp | grep $d | awk '{print $8}') #get the node for each of those job #'s
+      name=$(cat ~/qstatj.tmp | grep 'job_name'|awk '{print $2}') #look under qstat -j and get the full name of each job
+      cpu=$(cat ~/qstatj.tmp |grep 'usage'|awk '{print $3}'|sed 's/cpu=//;s/,//') #look under qstat -j and get the CPU time
+	numNodes=$(cat ~/qstatj.tmp |grep 'parallel'|awk '{print $5}')
+	if [ -z "$numNodes" ]
+	then
+		numNodes=1
+	fi
+      printf "%-7s %-50s %-10s %-10s %-15s %-20s \n" "$d" "$name" "$stat" "$numNodes" "$cpu" "$node" >> ~/qstatSort.tmp #print em'
+done
+
+if [ -f ~/qstatSort.tmp ];
+then
+	sort -g ~/qstatSort.tmp #sort/print the file by the first column (job ID #)
+	rm -f ~/qstatSort.tmp #remove the file so that the next loop has a clean file to write to
+fi
+
+for d in $(qstat -u $me | egrep ' [Eh]{1,2}qw | qw ' | awk '{print $1}') #make a list of the ID #'s of my waiting jobs
+      do
+      let qw+=1
+      qstat -j $d> ~/qstatj.tmp # another intermediate output
+
+      name=$(cat ~/qstatj.tmp | grep 'job_name'|awk '{print $2}') #look under qstat -j and get the full name of each job
+
+      printf "%-7s %-50s qw\n" "$d" "$name" >> ~/qstatSort.tmp  #print 'em
+done
+
+if [ -f ~/qstatSort.tmp ]
+then
+	sort -g ~/qstatSort.tmp
+fi
+
+rm -f ~/qstatu.tmp ~/qstatj.tmp ~/qstatSort.tmp  # kill intermediate output
+
+echo -n $(finger $me|grep Login|awk '{print $4" "$5" "$6}')
+echo " ($me) has $r jobs running and $qw jobs in the queue."
