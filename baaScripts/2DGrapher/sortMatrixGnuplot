@@ -1,0 +1,17 @@
+#!/bin/bash
+#runQueueScript.bash
+#if you want to run the densityTorsion code, you should call it with one of two scripts
+#this script is if you want to run a batch of them. It requires name and input file as command line
+#arguments. It then reads in the values from the input script and calls the simulation code
+#this is really meant for Radon
+
+#########
+
+
+
+echo "set terminal postscript eps color lw 3 'Times New Roman' 20; set output 'graph.eps'; set view  75,45; set samples 50, 50; set isosamples 50, 50; unset surface; set pm3d; set size square; set xlabel 'n'; set ylabel 'm'; set title 'Real Components of Density Matrix in Motion T=1'; splot '$1' u 1:2:3" |/Applications/Gnuplot.app/Contents/Resources/bin/gnuplot -persist
+
+
+# set palette defined (0 'white', 0.2 'yellow', 0.3 'red', 0.4 'green', 0.5 'blue', 0.6 'violet', 0.7 'black');
+
+# set palette defined (0 'red',0.05 'orange',0.1 'yellow',0.15 'green', 0.2 'blue', 0.25 'white',0.3 'red',0.35 'orange',0.4 'yellow',0.45 'green', 0.5 'blue', 0.55 'white', 0.6 'red',0.65 'orange',0.7 'yellow',0.75 'green', 0.8 'blue', 0.85 'white')

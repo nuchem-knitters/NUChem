@@ -1,1 +1,1 @@
-This python script calculates FWHM from a text file of data. Included are two sample data files.
+This python script calculates FWHM from a text file of data. Included are two sample data files ("RegularBiphenylPower50.dat") ("heavyBiphenylPower50.dat").
