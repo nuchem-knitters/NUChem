@@ -87,7 +87,7 @@ outFile.write(str(deltaPulseTime) + '\n')
 outFile.close
 
 
-print a, "  FWHM of Alignment:",FWHM, "   LeftDelta:", deltaLeftPulseTime, "   Delta:", deltaPulseTime
+print  "FWHM of Alignment:",FWHM, "   LeftDelta:", deltaLeftPulseTime, "   Delta:", deltaPulseTime
 
 
 

@@ -8,7 +8,7 @@
 #	The script reads in all of the lines, pulls out the values you want and into a 3D array
 #	which it then sorts twice.
 #
-# Parameters - none, yet.
+# Parameters - none, yet. Could easily be modified to take a command line argument as the input and/or output file
 #
 # Output - a file called 'graphOutput.dat' containing the data formatted for GNUPlot's 3D graphing
 #
