@@ -28,4 +28,4 @@ for a in files:
 		if not (os.path.isfile(fileName+".out")): #if the outfile exits (i.e. if the job is running or finished) then we don't want it
 			runFile.write("/opt/local/share/qchem/qchem.csh -l "+fileName+".out" + " -p 8 " +queue+a+"\n") #set the job for 8 processor run
 
-os.system("chmod u+x runQChemJobs.bash") #make it excecutable
+os.system("chmod u+x runQChemJobs.bash") #make it executable
