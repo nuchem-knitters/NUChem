@@ -1,4 +1,5 @@
 #!/usr/bin/python
+#runQChem.py
 
 #this script scans a directory for .in files (QChem input files) and then makes a bash script
 #containing the syntax to sumbit them all to radon, either on all.q or SMP
@@ -27,3 +28,4 @@ for a in files:
 		if not (os.path.isfile(fileName+".out")): #if the outfile exits (i.e. if the job is running or finished) then we don't want it
 			runFile.write("/opt/local/share/qchem/qchem.csh -l "+fileName+".out" + " -p 8 " +queue+a+"\n") #set the job for 8 processor run
 
+os.system("chmod u+x runQChemJobs.bash") #make it excecutable
