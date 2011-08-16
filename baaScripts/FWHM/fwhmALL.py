@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 ########################################################################################
 #fwhmALL.py
 #
@@ -20,25 +22,33 @@
 
 import sys,re
 
+
+maxFWHM=0 #initialize this
+
+#give fwhm.py the flexibility to handle different timesteps
+convertTime=1/float(sys.argv[1])
+
+
 ###open file###
 import sys
-inp = open (sys.argv[1],'r') #open the file specified by the user
-expectation = [] #declare arrays
+inp = open (sys.argv[2],'r') 
+expectation = []
 pulseStrength = []
-#read lines into array 
+#read line into array 
 for line in inp.readlines(): #step through each line
 	inputLine = line.split() #split each line by whitespace
 	expectation.append(float(inputLine[1])) #get the alignment expectation value
 	pulseStrength.append(float(inputLine[4])) #get the laser pulse strength
-
+	
 ###look for peak of alignment###
-maxAlign = expectation[0] #initialize values
+maxAlign = expectation[0]
 maxAlignTime=0
 for i, value in enumerate(expectation): #step through the expectation values
 	if value > maxAlign: #if this is bigger than the last one
 		maxAlign=value #set max alignment
 		maxAlignTime=i+1 #set the time max alignment occurred
-maxAlignTime=maxAlignTime/100. #the enumerate fxn gives the times in integers, while my timestep is in 100ths of integers (my timesteps are 10 fs, and I want answers in ps), so I divide by 100		
+maxAlignTime=maxAlignTime/convertTime #the enumerate fxn gives the times in integers, while my timestep is in 100ths of integers (my timesteps are 10 fs, and I want answers in ps), so I divide by 100 8/16/11 - now variable timestep		
+	
 
 
 ###look for peak of the pulse###
@@ -59,8 +69,8 @@ for i, value in enumerate(pulseStrength):
 				pulseDeathTime=i+1 
 
 ###convert times to ps for comparison###
-maxPulseTime=maxPulseTime/100.
-pulseDeathTime=pulseDeathTime/100.
+maxPulseTime=maxPulseTime/convertTime
+pulseDeathTime=pulseDeathTime/convertTime
 
 
 ###find left & right bounds###
@@ -70,24 +80,24 @@ leftHM, rightHM=0, 0
 for i, value in enumerate(expectation):
 	if leftHM==0: #we're still looking for the left bound
 		if value > halfMax: #we've passed halfMax, so whatever we just passed must be it!
-			leftHM=i/100. #this is the left bound
+			leftHM=i/convertTime #this is the left bound
 	elif rightHM==0: #we've found the left, let's look for the right, but make sure that once we find it we don't do it again (sometimes later in the simulation the pulse comes back up to FWHM levels	
 		if value < halfMax: #we've passed halfMax going the other way, so we found it
-			rightHM=i/100.
+			rightHM=i/convertTime
 
 ###find delta T's###
 FWHM=rightHM-leftHM
 deltaLeftPulseTime=leftHM-pulseDeathTime
 deltaPulseTime=maxAlignTime-pulseDeathTime
 
-outFile = open (sys.argv[2], 'a')
+outFile = open (sys.argv[3], 'a')
 outFile.write(str(FWHM) + '\n')
 outFile.write(str(deltaLeftPulseTime) + '\n')
 outFile.write(str(deltaPulseTime) + '\n')
 outFile.close
 
 
-print  "FWHM of Alignment:",FWHM, "   LeftDelta:", deltaLeftPulseTime, "   Delta:", deltaPulseTime
+print "FWHM of Alignment:",FWHM, "   LeftDelta:", deltaLeftPulseTime, "   Delta:", deltaPulseTime
 
 
 
